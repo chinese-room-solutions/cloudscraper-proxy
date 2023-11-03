@@ -62,7 +62,7 @@ app.register_blueprint(construct_proxy_blueprint(agent_pool))
 
 
 if __name__ == "__main__":
-    log.info("Starting development backend service.", host=config.host, port=config.port)
+    log.info("Starting development Cloudscraper Proxy service.", host=config.host, port=config.port)
     app.run(
         host=config.host,
         port=config.port,

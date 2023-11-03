@@ -63,11 +63,12 @@ class Config(BaseModel):
         """
 
         path = getenv(env_var, "config.yml")
+        data = {}
         try:
             with open(path, encoding="utf8") as file:
-                data = load(file, Loader=BaseLoader) or {}
+                data = load(file, Loader=BaseLoader)
         except FileNotFoundError:
-            raise FileNotFoundError(f"Could not find the configuration file at {path}.")
+            pass
         except YAMLError as ex:
             raise YAMLError(
                 f"There was an error parsing the configuration file at {path}: {ex}."
