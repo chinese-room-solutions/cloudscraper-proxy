@@ -11,8 +11,8 @@
                 "CLOUDSCRAPER_PROXY_LOG_DEV": "True",
                 "FLASK_ENV": "development",
                 // "FLASK_DEBUG": "1",
-                "CLOUDSCRAPER_PROXY_CONFIG_PATH": "/home/null/workspace/chinese-room-solutions/cloudscraper-proxy/.dev/config.yml",
-                "PYTHONPATH": "$PYTHONPATH:/home/null/workspace/chinese-room-solutions/cloudscraper-proxy"
+                "CLOUDSCRAPER_PROXY_CONFIG_PATH": "${workspaceFolder}/.dev/config.yml",
+                "PYTHONPATH": "$PYTHONPATH:${workspaceFolder}"
             },
             "cwd": "${workspaceFolder}",
             "justMyCode": false
