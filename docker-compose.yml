@@ -1,0 +1,24 @@
+version: '3'
+services:
+  cloudscraper-proxy-service:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./.dev/config.yml:/opt/cloudscraper-proxy/config.yml
+      # - ./promtail-config.yml:/etc/promtail/config.yml
+      - ./supervisord.conf:/etc/supervisor/supervisord.conf
+      - logs:/opt/cloudscraper-proxy/logs
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+
+volumes:
+  logs:

@@ -4,6 +4,26 @@
 
 This is a simple proxy that uses [cloudscraper](https://github.com/venomous/cloudscraper) to bypass Cloudflare's anti-bot page.
 
+## How to use?
+
+* Create a `config.yml` file like this:
+```
+mkdir .dev
+cat << EOF > .dev/config.yml
+---
+log:
+  dev: False
+EOF
+```
+* Run docker compose:
+```
+docker-compose up -d
+```
+* Test it:
+```
+curl -X POST localhost:8080/agent/persistent
+```
+
 ### How to develop?
 
 * Install [pyenv](https://github.com/pyenv/pyenv#installation)
@@ -20,8 +40,6 @@ If you're using VSCode, `launch.json` is included, so you can run development wi
 
 **Development notes**
 
-* Don't forget to update `__version__.py` when you make changes.
+* Don't forget to update `__version__.py` when you make changes according to [semver](https://semver.org/).
 * Update and run unit tests before pushing.
 * For commit messages forllow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
-
-## How to build?
