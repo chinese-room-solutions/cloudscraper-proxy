@@ -1,0 +1,10 @@
+flask==3.0.*
+flask-wtf==1.2.*
+marshmallow==3.20.*
+gunicorn==21.2.*
+cloudscraper==1.2.*
+yaml==6.0.*
+pydantic==2.4.*
+flask_testing==0.8.*
+parameterized==0.9.*
+coverage==7.3.*

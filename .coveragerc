@@ -1,0 +1,5 @@
+[run]
+omit =
+    utils/config.py
+    utils/logger.py
+    utils/gunicorn_structlog.py

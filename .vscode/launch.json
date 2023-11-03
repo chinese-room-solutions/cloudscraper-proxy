@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Flask",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "env": {
+                "CLOUDSCRAPER_PROXY_LOG_DEV": "True",
+                "FLASK_ENV": "development",
+                // "FLASK_DEBUG": "1",
+                "CLOUDSCRAPER_PROXY_CONFIG_PATH": "/home/null/workspace/chinese-room-solutions/cloudscraper-proxy/.dev/config.yml",
+                "PYTHONPATH": "$PYTHONPATH:/home/null/workspace/chinese-room-solutions/cloudscraper-proxy"
+            },
+            "cwd": "${workspaceFolder}",
+            "justMyCode": false
+        }
+    ]
+}
