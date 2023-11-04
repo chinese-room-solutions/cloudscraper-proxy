@@ -4,11 +4,12 @@ import gzip
 from time import time
 from urllib.parse import unquote
 
-from flask import Blueprint, Response, jsonify, make_response, request
-from structlog import get_logger
-
 from entity.proxy import ProxyRequest
+from flask import Blueprint, Response, jsonify, make_response, request
+from marshmallow import ValidationError
+from structlog import get_logger
 from utils.agent_pool import AgentPool
+from utils.dotdict import dotdict
 
 
 def construct_proxy_blueprint(agent_pool: AgentPool):
@@ -25,12 +26,16 @@ def construct_proxy_blueprint(agent_pool: AgentPool):
     def proxy_request():
         """Wrap the request with cloudscraper and proxy to the destination."""
 
-        pr = ProxyRequest(request.args)
-        if not pr.validate():
-            return jsonify(pr.errors), 400
+        pr = ProxyRequest()
+        params = {}
+        try:
+            params = pr.load(request.args)
+        except ValidationError as err:
+            return jsonify(err.messages), 400
+        params = dotdict(params)
 
-        agent_id = pr.agent_id.data
-        url = unquote(pr.dst.data)
+        agent_id = params.agent_id
+        url = unquote(params.dst)
         if agent_id in agent_pool:
             response = agent_pool[agent_id].request(
                 request.method,

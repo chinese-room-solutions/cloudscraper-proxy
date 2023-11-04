@@ -1,15 +1,12 @@
 """Agent request form."""
 
-from flask_wtf import FlaskForm
 from marshmallow import INCLUDE, Schema, fields, validate
-from wtforms import StringField
-from wtforms.validators import DataRequired
 
 
-class EphemeralAgentRequest(FlaskForm):
+class EphemeralAgentRequest(Schema):
     """Proxy request form."""
 
-    url = StringField("url", validators=[DataRequired()])
+    url = fields.String(required=True)
 
 
 class BrowserOptionsSchema(Schema):
@@ -60,6 +57,7 @@ class PersistentAgentRequestPayload(Schema):
 
     class Meta:
         unknown = INCLUDE
+
 
 class EphemeralAgentRequestPayload(Schema):
     """Ephemeral agent request payload schema."""

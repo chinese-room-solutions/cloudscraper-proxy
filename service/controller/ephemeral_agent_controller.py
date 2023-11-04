@@ -4,11 +4,11 @@ from time import time
 from urllib.parse import unquote
 
 import cloudscraper
+from entity.agent import EphemeralAgentRequest, EphemeralAgentRequestPayload
 from flask import Blueprint, Response, jsonify, request
 from marshmallow import ValidationError
 from structlog import get_logger
-
-from entity.agent import EphemeralAgentRequest, EphemeralAgentRequestPayload
+from utils.dotdict import dotdict
 
 
 def construct_ephemeral_agent_blueprint() -> Blueprint:
@@ -25,22 +25,27 @@ def construct_ephemeral_agent_blueprint() -> Blueprint:
     def agent_request():
         """Generate an ephemeral agent: user agent and cloudflare session cookie."""
 
-        ar = EphemeralAgentRequest(request.args)
-        if not ar.validate():
-            return jsonify(ar.errors), 400
-        arp = EphemeralAgentRequestPayload()
+        ar = EphemeralAgentRequest()
         params = {}
+        try:
+            params = ar.load(request.args)
+        except ValidationError as err:
+            return jsonify(err.messages), 400
+        params = dotdict(params)
+
+        arp = EphemeralAgentRequestPayload()
+        data = {}
         if request.content_type == "application/json":
             pld = request.get_json()
             if pld is not None:
                 try:
-                    params = arp.load(pld)
+                    data = arp.load(pld)
                 except ValidationError as err:
                     return jsonify(err.messages), 400
 
         try:
-            url = unquote(ar.url.data)
-            cookie, ua = cloudscraper.get_cookie_string(url, **params)
+            url = unquote(params.url)
+            cookie, ua = cloudscraper.get_cookie_string(url, **data)
         except Exception as err:
             log.error("Couldn't create an ephemeral agent.", error=err)
             return Response(status=500)

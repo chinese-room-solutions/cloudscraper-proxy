@@ -42,7 +42,7 @@ class TestProxyController(TestCase):
     def test_proxy_request_missing_params(self):
         response = self.client.get("/proxy?agent_id=0")
         self.assert400(response)
-        self.assertEqual(response.json, {"dst": ["This field is required."]})
+        self.assertEqual(response.json, {"dst": ['Missing data for required field.']})
 
     def test_filter_headers(self):
         headers = {

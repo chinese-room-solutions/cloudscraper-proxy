@@ -17,11 +17,15 @@ EOF
 ```
 * Run docker compose:
 ```
-docker-compose up -d
+docker compose up -d
 ```
 * Test it:
 ```
 curl -X POST localhost:8080/agent/persistent
+```
+* To refresh and build the container again:
+```
+docker compose build --no-cache
 ```
 
 ### How to develop?

@@ -1,9 +1,8 @@
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 from flask import Flask
 from flask_testing import TestCase
-from parameterized import parameterized
 
 from controller.ephemeral_agent_controller import (
     construct_ephemeral_agent_blueprint,
@@ -42,7 +41,7 @@ class TestEphemeralAgentController(TestCase):
     def test_agent_request_missing_params(self):
         response = self.client.post("/agent/ephemeral")
         self.assert400(response)
-        self.assertEqual(response.json, {"url": ["This field is required."]})
+        self.assertEqual(response.json, {"url": ['Missing data for required field.']})
 
     def test_agent_request_invalid_params(self):
         params = {"interpreter": "javascript"}

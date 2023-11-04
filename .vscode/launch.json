@@ -12,9 +12,9 @@
                 "FLASK_ENV": "development",
                 // "FLASK_DEBUG": "1",
                 "CLOUDSCRAPER_PROXY_CONFIG_PATH": "${workspaceFolder}/.dev/config.yml",
-                "PYTHONPATH": "$PYTHONPATH:${workspaceFolder}"
+                "PYTHONPATH": "$PYTHONPATH:${workspaceFolder}/service"
             },
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/service",
             "justMyCode": false
         }
     ]
