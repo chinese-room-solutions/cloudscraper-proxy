@@ -48,7 +48,7 @@ class TestProxyController(TestCase):
                 dotdict(
                     {
                         "status_code": 404,
-                        "json": {"error": "Not found"},
+                        "json": {"code": 404, "status": "Not Found"},
                     }
                 ),
             ),

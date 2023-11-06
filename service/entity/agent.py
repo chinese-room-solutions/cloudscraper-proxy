@@ -87,3 +87,16 @@ class EphemeralAgentRequestData(Schema):
 
     class Meta:
         unknown = INCLUDE
+
+
+class AgentRequestFullResponse(Schema):
+    """Agent request full response schema."""
+
+    user_agent = fields.String(required=True, description="Generated user agent.")
+    cf_clearance = fields.String(required=True, description="Obtained cf_clearance.")
+
+
+class AgentRequestShortResponse(Schema):
+    """Agent request short response schema."""
+
+    id = fields.Integer(required=True, description="Agent ID.")

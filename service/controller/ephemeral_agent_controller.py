@@ -4,9 +4,13 @@ from time import time
 from urllib.parse import unquote
 
 import cloudscraper
-from entity.agent import EphemeralAgentRequestData, EphemeralAgentRequestParams
+from entity.agent import (
+    AgentRequestFullResponse,
+    EphemeralAgentRequestData,
+    EphemeralAgentRequestParams,
+)
 from flask import jsonify, request
-from flask_smorest import Blueprint
+from flask_smorest import Blueprint, abort
 from structlog import get_logger
 from utils.dotdict import dotdict
 
@@ -41,8 +45,7 @@ def construct_ephemeral_agent_blueprint() -> Blueprint:
     @bp.route("", methods=["POST"])
     @bp.arguments(EphemeralAgentRequestParams, location="query", required=True)
     @bp.arguments(EphemeralAgentRequestData, location="json", required=False)
-    @bp.response(200, description="Success")
-    @bp.response(500, description="Internal Server Error")
+    @bp.response(201, AgentRequestFullResponse)
     def create(params, data):
         """Generate an ephemeral agent: user agent and cloudflare session cookie."""
 
@@ -52,16 +55,16 @@ def construct_ephemeral_agent_blueprint() -> Blueprint:
             cookie, ua = cloudscraper.get_cookie_string(url, **data)
         except Exception as err:
             log.error("Couldn't create an ephemeral agent.", error=err)
-            return jsonify({"error": "Internal server error"}), 500
+            return abort(500)
 
         return (
             jsonify(
                 {
-                    "User-Agent": ua,
-                    "cf_clearance": cookie,
+                    "user_agent": ua,
+                    "cf_clearance": cookie.lstrip("cf_clearance="),
                 }
             ),
-            200,
+            201,
         )
 
     return bp

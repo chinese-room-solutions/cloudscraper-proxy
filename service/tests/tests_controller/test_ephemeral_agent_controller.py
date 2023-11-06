@@ -27,9 +27,9 @@ class TestEphemeralAgentController(TestCase):
                 {"disableCloudflareV1": True},
                 dotdict(
                     {
-                        "status_code": 200,
+                        "status_code": 201,
                         "json": {
-                            "User-Agent": UA,
+                            "user_agent": UA,
                             "cf_clearance": "some_cf_clearance_value",
                         },
                     }

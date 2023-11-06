@@ -5,8 +5,8 @@ from time import time
 from urllib.parse import unquote
 
 from entity.proxy import ProxyRequestParams
-from flask import jsonify, make_response, request
-from flask_smorest import Blueprint
+from flask import make_response, request
+from flask_smorest import Blueprint, abort
 from structlog import get_logger
 from utils.agent_pool import AgentPool
 from utils.dotdict import dotdict
@@ -38,11 +38,8 @@ def construct_proxy_blueprint(agent_pool: AgentPool) -> Blueprint:
 
     @bp.route("", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
     @bp.arguments(ProxyRequestParams, location="query")
-    @bp.response(200, description="Success")
-    @bp.response(404, description="Not Found")
-    @bp.response(500, description="Internal Server Error")
     def proxy(params):
-        """Proxy the request as it is."""
+        """Proxy the request as it is. Returns the response from the destination server or 404 if the agent is not found."""
 
         params = dotdict(params)
         agent_id = params.agent_id
@@ -74,7 +71,7 @@ def construct_proxy_blueprint(agent_pool: AgentPool) -> Blueprint:
                     flask_response.headers[name] = value
             return flask_response
         else:
-            return jsonify({"error": "Not found"}), 404
+            return abort(404)
 
     return bp
 

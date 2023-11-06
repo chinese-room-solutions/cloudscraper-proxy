@@ -40,14 +40,16 @@ class TestPersistentAgentController(TestCase):
                 dotdict(
                     {
                         "status_code": 200,
-                        "json": {"User-Agent": UA, "cf_clearance": ""},
+                        "json": {"user_agent": UA, "cf_clearance": ""},
                     }
                 ),
             ),
             (
                 "non-existing-agent",
                 "/agent/persistent/1",
-                dotdict({"status_code": 404, "json": {"error": "Not found"}}),
+                dotdict(
+                    {"status_code": 404, "json": {"code": 404, "status": "Not Found"}}
+                ),
             ),
         ]
     )
@@ -61,7 +63,7 @@ class TestPersistentAgentController(TestCase):
             (
                 "valid-params",
                 {"disableCloudflareV1": True},
-                dotdict({"status_code": 200, "json": {"id": 0}}),
+                dotdict({"status_code": 201, "json": {"id": 0}}),
             ),
             (
                 "invalid-params",
@@ -105,7 +107,9 @@ class TestPersistentAgentController(TestCase):
             (
                 "non-existing-agent",
                 "/agent/persistent/1",
-                dotdict({"status_code": 404, "json": {"error": "Not found"}}),
+                dotdict(
+                    {"status_code": 404, "json": {"code": 404, "status": "Not Found"}}
+                ),
             ),
             (
                 "all-agents",
