@@ -10,7 +10,7 @@
             "env": {
                 "CLOUDSCRAPER_PROXY_LOG_DEV": "True",
                 "FLASK_ENV": "development",
-                // "FLASK_DEBUG": "1",
+                "FLASK_DEBUG": "0",
                 "CLOUDSCRAPER_PROXY_CONFIG_PATH": "${workspaceFolder}/.dev/config.yml",
                 "PYTHONPATH": "$PYTHONPATH:${workspaceFolder}/service"
             },

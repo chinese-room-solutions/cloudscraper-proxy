@@ -3,7 +3,7 @@
 from marshmallow import INCLUDE, Schema, fields, validate
 
 
-class EphemeralAgentRequest(Schema):
+class EphemeralAgentRequestParams(Schema):
     """Proxy request form."""
 
     url = fields.String(required=True)
@@ -20,7 +20,7 @@ class BrowserOptionsSchema(Schema):
     custom_ua = fields.String(allow_none=True)
 
 
-class PersistentAgentRequestPayload(Schema):
+class PersistentAgentRequestData(Schema):
     """Persistent agent request payload schema."""
 
     disableCloudflareV1 = fields.Boolean(
@@ -59,7 +59,7 @@ class PersistentAgentRequestPayload(Schema):
         unknown = INCLUDE
 
 
-class EphemeralAgentRequestPayload(Schema):
+class EphemeralAgentRequestData(Schema):
     """Ephemeral agent request payload schema."""
 
     allow_brotli = fields.Boolean(

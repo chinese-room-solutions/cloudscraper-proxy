@@ -1,39 +1,50 @@
-"""Proxy controller module porovides the proxy blueprint."""
+"""Proxy controller module provides the proxy blueprint."""
 
 import gzip
 from time import time
 from urllib.parse import unquote
 
-from entity.proxy import ProxyRequest
-from flask import Blueprint, Response, jsonify, make_response, request
-from marshmallow import ValidationError
+from entity.proxy import ProxyRequestParams
+from flask import jsonify, make_response, request
+from flask_smorest import Blueprint
 from structlog import get_logger
 from utils.agent_pool import AgentPool
 from utils.dotdict import dotdict
 
 
-def construct_proxy_blueprint(agent_pool: AgentPool):
+def construct_proxy_blueprint(agent_pool: AgentPool) -> Blueprint:
     """Construct the proxy blueprint."""
 
     log = get_logger(__name__)
-    ctrl = Blueprint("proxy", __name__)
+    bp = Blueprint("proxy", __name__, url_prefix="/proxy", description="Proxy API.")
 
-    @ctrl.before_request
+    @bp.before_request
     def before_request():
         request.start_time = time()
 
-    @ctrl.route("/proxy", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
-    def proxy_request():
-        """Wrap the request with cloudscraper and proxy to the destination."""
+    @bp.after_request
+    def after_request(response):
+        request_time = time() - request.start_time
+        log.info(
+            "Processing request.",
+            endpoint=request.url_rule.rule,
+            args=request.view_args,
+            method=request.method,
+            status=response.status_code,
+            src=request.remote_addr,
+            time_seconds=request_time,
+        )
+        return response
 
-        pr = ProxyRequest()
-        params = {}
-        try:
-            params = pr.load(request.args)
-        except ValidationError as err:
-            return jsonify(err.messages), 400
+    @bp.route("", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
+    @bp.arguments(ProxyRequestParams, location="query")
+    @bp.response(200, description="Success")
+    @bp.response(404, description="Not Found")
+    @bp.response(500, description="Internal Server Error")
+    def proxy(params):
+        """Proxy the request as it is."""
+
         params = dotdict(params)
-
         agent_id = params.agent_id
         url = unquote(params.dst)
         if agent_id in agent_pool:
@@ -63,34 +74,24 @@ def construct_proxy_blueprint(agent_pool: AgentPool):
                     flask_response.headers[name] = value
             return flask_response
         else:
-            return Response(status=404)
+            return jsonify({"error": "Not found"}), 404
 
-    @ctrl.after_request
-    def after_request(response):
-        request_time = time() - request.start_time
-        log.info(
-            "Processing request.",
-            endpoint=request.url_rule.rule,
-            args=request.view_args,
-            method=request.method,
-            status=response.status_code,
-            src=request.remote_addr,
-            time_seconds=request_time,
-        )
-        return response
-
-    return ctrl
+    return bp
 
 
 def filter_headers(headers: dict[str, str]) -> dict[str, str]:
     """Filter out headers that are not allowed to be proxied."""
 
-    headers.pop("Accept", None)
-    headers.pop("Accept-Encoding", None)
-    headers.pop("Accept-Language", None)
-    headers.pop("Connection", None)
-    headers.pop("Content-Length", None)
-    headers.pop("Host", None)
-    headers.pop("User-Agent", None)
+    disallowed_headers = [
+        "Accept",
+        "Accept-Encoding",
+        "Accept-Language",
+        "Connection",
+        "Content-Length",
+        "Host",
+        "User-Agent",
+    ]
+    for header in disallowed_headers:
+        headers.pop(header, None)
 
     return headers

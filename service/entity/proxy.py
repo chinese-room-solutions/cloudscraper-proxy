@@ -3,7 +3,7 @@
 from marshmallow import Schema, fields
 
 
-class ProxyRequest(Schema):
+class ProxyRequestParams(Schema):
     """Proxy request form."""
 
     agent_id = fields.Integer(required=True)

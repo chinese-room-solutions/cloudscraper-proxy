@@ -1,4 +1,7 @@
-flask==3.0.*
+flask==2.3.*
+flask-smorest==0.42.*
+# flasgger==0.9.*
+# apispec==6.3.*
 marshmallow==3.20.*
 gunicorn==21.2.*
 cloudscraper==1.2.*
