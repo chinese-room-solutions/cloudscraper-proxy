@@ -27,6 +27,7 @@ curl -X POST localhost:8080/agent/persistent
 ```
 docker compose build --no-cache
 ```
+* OpenAPI documentation is available at the [/apispec](http://localhost:8080/apispec) endpoint.
 
 ### How to develop?
 

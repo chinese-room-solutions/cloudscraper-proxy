@@ -5,6 +5,7 @@ from datetime import datetime
 from json import dumps, loads
 from json.encoder import JSONEncoder
 
+from __version__ import __version__
 from controller.ephemeral_agent_controller import (
     construct_ephemeral_agent_blueprint,
 )
@@ -56,7 +57,7 @@ def create_app() -> tuple[Flask, Api]:
     app.config["WTF_CSRF_ENABLED"] = False
 
     app.config["API_TITLE"] = "Cloudscraper Proxy API"
-    app.config["API_VERSION"] = "v1"
+    app.config["API_VERSION"] = __version__
     app.config["OPENAPI_VERSION"] = "3.0.3"
     app.config["OPENAPI_URL_PREFIX"] = "/"
     app.config["OPENAPI_SWAGGER_UI_PATH"] = "/apispec"
