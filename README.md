@@ -23,7 +23,7 @@ docker compose up -d
 ```
 curl -X POST localhost:8080/agent/persistent
 ```
-* To refresh and build the container again:
+* To refresh and build the image again:
 ```
 docker compose build --no-cache
 ```
