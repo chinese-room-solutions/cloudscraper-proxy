@@ -1,5 +1,9 @@
 ## Cloudscraper Proxy
 
+![Python Version](https://img.shields.io/badge/python-3.11%20|%203.12-blue)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Codecov](https://codecov.io/gh/chinese-room-solutions/cloudscraper-proxy/branch/main/graph/badge.svg)
+
 ### What is this?
 
 This is a simple proxy that uses [cloudscraper](https://github.com/venomous/cloudscraper) to bypass Cloudflare's anti-bot page.
@@ -32,7 +36,7 @@ docker compose build --no-cache
 ### How to develop?
 
 * Install [pyenv](https://github.com/pyenv/pyenv#installation)
-* Install the desired Python >= 3.12: `pyenv install 3.12` 
+* Install the desired Python >= 3.11: `pyenv install 3.12` 
 * Create a virtualenv: `pyenv virtualenv 3.12 cloudscraper-proxy`
 * Activate the virtualenv: `pyenv activate cloudscraper-proxy`
 * Install the dependencies: `MEINHELD_NOGREEN=1 pip install --only-binary greenlet -r requirements.txt`
