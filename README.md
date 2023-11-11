@@ -43,7 +43,7 @@ docker compose build --no-cache
 ```
 docker compose down --remove-orphans
 ```
-* OpenAPI documentation is available at the [/apispec](http://localhost:8080/apispec) endpoint.
+* OpenAPI documentation is available at the [/apispec](http://localhost:5000/apispec) endpoint.
 
 ### How to develop?
 
