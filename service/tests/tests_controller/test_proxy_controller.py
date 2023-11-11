@@ -18,6 +18,7 @@ class TestProxyController(TestCase):
         self.mock_agent_pool.__contains__.side_effect = (
             lambda key: True if key == 0 else False
         )
+        self.mock_agent_pool.generate.return_value = (0, MagicMock())
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.headers = {"Content-Type": "text/plain"}
@@ -39,16 +40,18 @@ class TestProxyController(TestCase):
                     {
                         "status_code": 200,
                         "data": b"response content",
+                        "cookie": "agent_id=0; Path=/",
                     }
                 ),
             ),
             (
-                "non-existent-agent",
-                "/proxy?agent_id=1&dst=http://example.com",
+                "agent-not-specified",
+                "/proxy?dst=http://example.com",
                 dotdict(
                     {
-                        "status_code": 404,
-                        "json": {"code": 404, "status": "Not Found"},
+                        "status_code": 200,
+                        "data": b"response content",
+                        "cookie": "agent_id=0; Path=/",
                     }
                 ),
             ),
@@ -77,6 +80,10 @@ class TestProxyController(TestCase):
             self.assertEqual(response.data, expected.data)
         if expected.json is not None:
             self.assertEqual(response.json, expected.json)
+        if expected.cookie is not None:
+            self.assertEqual(response.headers.get("Set-Cookie"), expected.cookie)
+        if name == "agent-not-specified":
+            self.mock_agent_pool.generate.assert_called_once_with()
 
     def test_filter_headers(self):
         headers = {

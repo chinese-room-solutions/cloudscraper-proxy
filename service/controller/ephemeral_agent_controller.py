@@ -1,13 +1,14 @@
 """This controller provides the ephemeral proxy agent blueprint."""
 
+from random import choice
 from time import time
 from urllib.parse import unquote
 
 import cloudscraper
 from entity.agent import (
-    AgentRequestFullResponse,
-    EphemeralAgentRequestData,
-    EphemeralAgentRequestParams,
+    AgentRequestFullResponseShema,
+    EphemeralAgentRequestDataShema,
+    EphemeralAgentRequestParamsShema,
 )
 from flask import jsonify, request
 from flask_smorest import Blueprint, abort
@@ -15,7 +16,7 @@ from structlog import get_logger
 from utils.dotdict import dotdict
 
 
-def construct_ephemeral_agent_blueprint() -> Blueprint:
+def construct_ephemeral_agent_blueprint(proxy_configs: list[dict] = [{}]) -> Blueprint:
     log = get_logger(__name__)
     bp = Blueprint(
         "ephemeral-agent",
@@ -43,16 +44,18 @@ def construct_ephemeral_agent_blueprint() -> Blueprint:
         return response
 
     @bp.route("", methods=["POST"])
-    @bp.arguments(EphemeralAgentRequestParams, location="query", required=True)
-    @bp.arguments(EphemeralAgentRequestData, location="json", required=False)
-    @bp.response(201, AgentRequestFullResponse)
+    @bp.arguments(EphemeralAgentRequestParamsShema, location="query", required=True)
+    @bp.arguments(EphemeralAgentRequestDataShema, location="json", required=False)
+    @bp.response(201, AgentRequestFullResponseShema)
     def create(params, data):
         """Generate an ephemeral agent: user agent and cloudflare session cookie."""
 
         params = dotdict(params)
         try:
             url = unquote(params.url)
-            cookie, ua = cloudscraper.get_cookie_string(url, **data)
+            cookie, ua = cloudscraper.get_cookie_string(
+                url, **(choice(proxy_configs) | data)
+            )
         except Exception as err:
             log.error("Couldn't create an ephemeral agent.", error=err)
             return abort(500)

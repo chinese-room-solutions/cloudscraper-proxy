@@ -3,10 +3,10 @@ services:
   cloudscraper-proxy-service:
     build: .
     ports:
-      - "8080:8080"
+      - "5000:5000"
     volumes:
-      - ./.dev/config.yml:/opt/cloudscraper-proxy/config.yml
       # - ./promtail-config.yml:/etc/promtail/config.yml
+      - ./default-config.yml:/opt/cloudscraper-proxy/config.yml
       - ./supervisord.conf:/etc/supervisor/supervisord.conf
       - logs:/opt/cloudscraper-proxy/logs
     logging:

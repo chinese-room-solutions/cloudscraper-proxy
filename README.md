@@ -10,26 +10,38 @@ This is a simple proxy that uses [cloudscraper](https://github.com/venomous/clou
 
 ### How to use?
 
-* Create a `config.yml` file like this:
-```
-mkdir .dev
-cat << EOF > .dev/config.yml
----
-log:
-  dev: False
-EOF
-```
 * Run docker compose:
 ```
 docker compose up -d
 ```
-* Test it:
+* Create a persistent agent (exists until the service is restarted or the agent is deleted):
 ```
-curl -X POST localhost:8080/agent/persistent
+curl -X POST localhost:5000/agent/persistent
 ```
+* Use the agent:
+```
+curl -X GET "localhost:5000/proxy?agent_id=0&dst=https://example.com"
+```
+* Delete the agent:
+```
+curl -X DELETE localhost:5000/agent/persistent/0
+```
+* Generate a user agent and the `cf_clearance` cookie using the ephemeral agent:
+```
+curl -X POST "localhost:5000/agent/ephemeral?url=https://example.com"
+```
+* To make a request without explicitely creating an agent:
+```
+curl -b cookies.txt -c cookies.txt -X GET "localhost:5000/proxy?dst=https://example.com"
+```
+This will create a persistent agent and the `agent_id` cookie will be set. You can use this cookie to make sequential requests with the same agent.
 * To refresh and build the image again:
 ```
 docker compose build --no-cache
+```
+* To remove the container:
+```
+docker compose down --remove-orphans
 ```
 * OpenAPI documentation is available at the [/apispec](http://localhost:8080/apispec) endpoint.
 
@@ -41,7 +53,7 @@ docker compose build --no-cache
 * Activate the virtualenv: `pyenv activate cloudscraper-proxy`
 * Install the dependencies: `MEINHELD_NOGREEN=1 pip install --only-binary greenlet -r requirements.txt`
 * Run the proxy with built-in Flask server: `PYTHONPATH="${PYTHONPATH}:." python main.py`
-* Run the proxy with Gunicorn: `PYTHONPATH="${PYTHONPATH}:."  gunicorn -b 0.0.0.0:8080 -c utils/gunicorn_config.py --logger-class utils.gunicorn_structlog.GunicornLogger wsgi:app`
+* Run the proxy with Gunicorn: `PYTHONPATH="${PYTHONPATH}:."  gunicorn -b 0.0.0.0:5000 -c utils/gunicorn_config.py --logger-class utils.gunicorn_structlog.GunicornLogger wsgi:app`
 * Run the tests: `PYTHONPATH="${PYTHONPATH}:." coverage run -m unittest discover tests/`
 * Deactivate the virtualenv: `pyenv deactivate`
 

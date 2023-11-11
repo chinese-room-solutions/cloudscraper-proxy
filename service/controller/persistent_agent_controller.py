@@ -1,11 +1,12 @@
 """This controller provides the persistent proxy agent blueprint."""
 
+from random import choice
 from time import time
 
 from entity.agent import (
-    AgentRequestFullResponse,
-    AgentRequestShortResponse,
-    PersistentAgentRequestData,
+    AgentRequestFullResponseShema,
+    AgentRequestShortResponseShema,
+    PersistentAgentRequestDataShema,
 )
 from flask import jsonify, request
 from flask_smorest import Blueprint, abort
@@ -13,7 +14,9 @@ from structlog import get_logger
 from utils.agent_pool import AgentPool
 
 
-def construct_persistent_agent_blueprint(agent_pool: AgentPool) -> Blueprint:
+def construct_persistent_agent_blueprint(
+    agent_pool: AgentPool, proxy_configs: list[dict] = [{}]
+) -> Blueprint:
     log = get_logger(__name__)
     bp = Blueprint(
         "persistent-agent",
@@ -41,7 +44,7 @@ def construct_persistent_agent_blueprint(agent_pool: AgentPool) -> Blueprint:
         return response
 
     @bp.route("/<int:agent_id>", methods=["GET"])
-    @bp.response(200, AgentRequestFullResponse)
+    @bp.response(200, AgentRequestFullResponseShema)
     def get(agent_id):
         """Get the persistent agent."""
 
@@ -63,16 +66,16 @@ def construct_persistent_agent_blueprint(agent_pool: AgentPool) -> Blueprint:
 
     @bp.route("", methods=["POST"])
     @bp.arguments(
-        PersistentAgentRequestData,
+        PersistentAgentRequestDataShema,
         location="json",
         required=False,
     )
-    @bp.response(201, AgentRequestShortResponse)
+    @bp.response(201, AgentRequestShortResponseShema)
     def create(data):
         """Generate a persistent agent."""
 
         try:
-            agent_id, _ = agent_pool.generate(**data)
+            agent_id, _ = agent_pool.generate(**(choice(proxy_configs) | data))
         except Exception as err:
             log.error("Couldn't create an agent.", error=err)
             return abort(500)
@@ -80,7 +83,7 @@ def construct_persistent_agent_blueprint(agent_pool: AgentPool) -> Blueprint:
         return jsonify({"id": agent_id}), 201
 
     @bp.route("/<int:agent_id>", methods=["DELETE"])
-    @bp.response(200, AgentRequestShortResponse)
+    @bp.response(200, AgentRequestShortResponseShema)
     def delete_one(agent_id):
         """Delete the persistent agent by the Id."""
 

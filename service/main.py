@@ -19,7 +19,7 @@ from utils.agent_pool import AgentPool
 from utils.config import Config
 from utils.logger import StructlogHandler, setup_logging
 
-config = Config.get_config()
+config = Config.parse_config()
 setup_logging(filename=config.log.path, log_level=config.log.level, dev=config.log.dev)
 log = get_logger(__name__)
 
@@ -71,9 +71,9 @@ def create_app() -> tuple[Flask, Api]:
 def register_blueprints(app: Api, agent_pool: AgentPool):
     """Register the blueprints."""
 
-    app.register_blueprint(construct_persistent_agent_blueprint(agent_pool))
-    app.register_blueprint(construct_ephemeral_agent_blueprint())
-    app.register_blueprint(construct_proxy_blueprint(agent_pool))
+    app.register_blueprint(construct_persistent_agent_blueprint(agent_pool, config.proxy))
+    app.register_blueprint(construct_ephemeral_agent_blueprint(config.proxy))
+    app.register_blueprint(construct_proxy_blueprint(agent_pool, config.proxy))
 
 
 app, api = create_app()

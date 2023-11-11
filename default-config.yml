@@ -1,0 +1,22 @@
+---
+host: 0.0.0.0
+port: 5000
+root: /
+
+log:
+    dev: False
+    level: INFO
+
+proxy:
+    - browser:
+          browser: firefox
+          platform: linux
+    - browser:
+          browser: firefox
+          platform: windows
+    - browser:
+          browser: firefox
+          platform: darwin
+    - browser:
+          browser: firefox
+          platform: android
