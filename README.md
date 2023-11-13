@@ -51,9 +51,9 @@ docker compose down --remove-orphans
 * Install the desired Python >= 3.11: `pyenv install 3.12` 
 * Create a virtualenv: `pyenv virtualenv 3.12 cloudscraper-proxy`
 * Activate the virtualenv: `pyenv activate cloudscraper-proxy`
-* Install the dependencies: `MEINHELD_NOGREEN=1 pip install --only-binary greenlet -r requirements.txt`
+* Install the dependencies: `pip install -r requirements.txt`
 * Run the proxy with built-in Flask server: `PYTHONPATH="${PYTHONPATH}:." python main.py`
-* Run the proxy with Gunicorn: `PYTHONPATH="${PYTHONPATH}:."  gunicorn -b 0.0.0.0:5000 -c utils/gunicorn_config.py --logger-class utils.gunicorn_structlog.GunicornLogger wsgi:app`
+* Run the proxy with Gunicorn: `PYTHONPATH="${PYTHONPATH}:."  gunicorn -b 0.0.0.0:5000 -c utils/gunicorn_config.py wsgi:app`
 * Run the tests: `PYTHONPATH="${PYTHONPATH}:." coverage run -m unittest discover tests/`
 * Deactivate the virtualenv: `pyenv deactivate`
 

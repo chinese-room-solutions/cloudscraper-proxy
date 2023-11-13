@@ -2,7 +2,6 @@ FROM python:3.12-slim-bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONPATH=/opt
-ENV MEINHELD_NOGREEN=1
 ARG PROMTAIL_VERSION=2.8.6
 
 RUN adduser --system --no-create-home cloudscraper-proxy

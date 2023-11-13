@@ -1,7 +1,8 @@
-version: '3'
+version: "3"
 services:
   cloudscraper-proxy-service:
     build: .
+    restart: always
     ports:
       - "5000:5000"
     volumes:
@@ -17,7 +18,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '2'
+          cpus: "2"
           memory: 2G
 
 volumes:

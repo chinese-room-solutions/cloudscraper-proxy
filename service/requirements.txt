@@ -1,13 +1,11 @@
 flask==2.3.*
 flask-smorest==0.42.*
-marshmallow==3.20.*
 gunicorn==21.2.*
+gevent==23.9.*
+marshmallow==3.20.*
+structlog==23.2.*
 cloudscraper==1.2.*
 pyyaml==6.0.*
-pydantic==2.4.*
 flask_testing==0.8.*
 parameterized==0.9.*
 coverage==7.3.*
-structlog==23.2.*
-greenlet==3.0.*
-meinheld==1.0.*
