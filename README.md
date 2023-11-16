@@ -34,7 +34,7 @@ curl -X POST "localhost:5000/agent/ephemeral?url=https://example.com"
 ```
 curl -b cookies.txt -c cookies.txt -X GET "localhost:5000/proxy?dst=https://example.com"
 ```
-This will create a persistent agent and the `agent_id` cookie will be set. You can use this cookie to make sequential requests with the same agent.
+This will create a persistent agent and the `cloudscraper_agent_id` cookie will be set. You can use this cookie to make sequential requests with the same agent.
 * To refresh and build the image again:
 ```
 docker compose build --no-cache
