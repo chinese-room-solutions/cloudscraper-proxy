@@ -47,6 +47,7 @@ def construct_ephemeral_agent_blueprint(proxy_configs: list[dict] = [{}]) -> Blu
     @bp.arguments(EphemeralAgentRequestParamsShema, location="query", required=True)
     @bp.arguments(EphemeralAgentRequestDataShema, location="json", required=False)
     @bp.response(201, AgentRequestFullResponseShema)
+    @bp.response(500, description="Couldn't create an ephemeral agent.")
     def create(params, data):
         """Generate an ephemeral agent: user agent and cloudflare session cookie."""
 

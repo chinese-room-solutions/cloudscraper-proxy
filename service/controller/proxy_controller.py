@@ -13,6 +13,9 @@ from utils.agent_pool import AgentPool
 from utils.dotdict import dotdict
 
 
+COOKIE_NAME = "cloudscraper_agent_id"
+
+
 def construct_proxy_blueprint(
     agent_pool: AgentPool, proxy_configs: list[dict] = [{}]
 ) -> Blueprint:
@@ -48,7 +51,7 @@ def construct_proxy_blueprint(
         url = unquote(params.dst)
         agent_id = params.agent_id
         if agent_id is None:
-            agent_id = request.cookies.get("agent_id")
+            agent_id = request.cookies.get(COOKIE_NAME)
             if agent_id is not None:
                 agent_id = int(agent_id)
         if agent_id is None or agent_id not in agent_pool:
@@ -59,7 +62,7 @@ def construct_proxy_blueprint(
             url,
             headers=filter_headers(dict(request.headers)),
             data=request.data,
-            cookies=request.cookies,
+            cookies=filter_cookies(dict(request.cookies)),
         )
 
         # Decode chunked response
@@ -78,7 +81,7 @@ def construct_proxy_blueprint(
         for name, value in response.headers.items():
             if name not in {"Content-Encoding", "Transfer-Encoding"}:
                 flask_response.headers[name] = value
-        flask_response.set_cookie("agent_id", str(agent_id))
+        flask_response.set_cookie(COOKIE_NAME, str(agent_id))
 
         return flask_response
 
@@ -101,3 +104,13 @@ def filter_headers(headers: dict[str, str]) -> dict[str, str]:
         headers.pop(header, None)
 
     return headers
+
+
+def filter_cookies(cookies: dict[str, str]) -> dict[str, str]:
+    """Filter out cookies that are not allowed to be proxied."""
+
+    disallowed_cookies = [COOKIE_NAME]
+    for cookie in disallowed_cookies:
+        cookies.pop(cookie, None)
+
+    return cookies

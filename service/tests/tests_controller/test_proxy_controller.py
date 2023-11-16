@@ -1,7 +1,12 @@
 import unittest
 from unittest.mock import MagicMock
 
-from controller.proxy_controller import construct_proxy_blueprint, filter_headers
+from controller.proxy_controller import (
+    COOKIE_NAME,
+    construct_proxy_blueprint,
+    filter_cookies,
+    filter_headers,
+)
 from flask_testing import TestCase
 from main import create_app
 from parameterized import parameterized
@@ -40,7 +45,7 @@ class TestProxyController(TestCase):
                     {
                         "status_code": 200,
                         "data": b"response content",
-                        "cookie": "agent_id=0; Path=/",
+                        "cookie": "cloudscraper_agent_id=0; Path=/",
                     }
                 ),
             ),
@@ -51,7 +56,7 @@ class TestProxyController(TestCase):
                     {
                         "status_code": 200,
                         "data": b"response content",
-                        "cookie": "agent_id=0; Path=/",
+                        "cookie": "cloudscraper_agent_id=0; Path=/",
                     }
                 ),
             ),
@@ -103,6 +108,12 @@ class TestProxyController(TestCase):
         self.assertNotIn("User-Agent", filtered)
         self.assertIn("X-Custom-Header", filtered)
         self.assertEqual(filtered["X-Custom-Header"], "custom-value")
+
+    def test_filter_cookies(self):
+        filtered = filter_cookies({COOKIE_NAME: "0", "custom_cookie": "custom-value"})
+        self.assertNotIn(COOKIE_NAME, filtered)
+        self.assertIn("custom_cookie", filtered)
+        self.assertEqual(filtered["custom_cookie"], "custom-value")
 
 
 if __name__ == "__main__":

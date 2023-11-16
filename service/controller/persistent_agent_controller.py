@@ -71,6 +71,7 @@ def construct_persistent_agent_blueprint(
         required=False,
     )
     @bp.response(201, AgentRequestShortResponseShema)
+    @bp.response(500, description="Couldn't create an agent.")
     def create(data):
         """Generate a persistent agent."""
 
@@ -84,6 +85,7 @@ def construct_persistent_agent_blueprint(
 
     @bp.route("/<int:agent_id>", methods=["DELETE"])
     @bp.response(200, AgentRequestShortResponseShema)
+    @bp.response(404, description="Agent not found.")
     def delete_one(agent_id):
         """Delete the persistent agent by the Id."""
 
