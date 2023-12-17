@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y supervisor wget unzip build-essential &
     apt-get remove -y wget unzip && apt-get autoremove -y && apt-get clean
 
 COPY service /opt/cloudscraper-proxy
+COPY supervisord.conf /etc/supervisor/supervisord.conf
 RUN mkdir -p /opt/cloudscraper-proxy/logs && chown -R cloudscraper-proxy: /opt/cloudscraper-proxy/logs
 
 RUN pip install -r /opt/cloudscraper-proxy/requirements.txt
