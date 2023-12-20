@@ -13,7 +13,7 @@ from utils.agent_pool import AgentPool
 from utils.dotdict import dotdict
 
 
-COOKIE_NAME = "cloudscraper_agent_id"
+COOKIE_NAME = "cloudscraper-agent-id"
 
 
 def construct_proxy_blueprint(

@@ -45,7 +45,7 @@ class TestProxyController(TestCase):
                     {
                         "status_code": 200,
                         "data": b"response content",
-                        "cookie": "cloudscraper_agent_id=0; Path=/",
+                        "cookie": "cloudscraper-agent-id=0; Path=/",
                     }
                 ),
             ),
@@ -56,7 +56,7 @@ class TestProxyController(TestCase):
                     {
                         "status_code": 200,
                         "data": b"response content",
-                        "cookie": "cloudscraper_agent_id=0; Path=/",
+                        "cookie": "cloudscraper-agent-id=0; Path=/",
                     }
                 ),
             ),
