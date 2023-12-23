@@ -7,8 +7,6 @@ services:
       - "5000:5000"
     volumes:
       # - ./promtail-config.yml:/etc/promtail/config.yml
-      # - ./default-config.yml:/opt/cloudscraper-proxy/config.yml
-      # - ./supervisord.conf:/etc/supervisor/supervisord.conf
       - logs:/opt/cloudscraper-proxy/logs
     logging:
       driver: "json-file"
