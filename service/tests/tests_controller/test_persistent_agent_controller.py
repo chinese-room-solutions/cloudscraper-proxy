@@ -25,9 +25,10 @@ class TestPersistentAgentController(TestCase):
         # Mock agent pool functionality
         self.mock_agent_pool = MagicMock()
         self.mock_agent_pool.__contains__.side_effect = (
-            lambda key: True if key == 0 else False
+            lambda key: True if key == 1 else False
         )
         self.mock_agent_pool.__getitem__.return_value = mock_agent
+        self.mock_agent_pool.items.return_value = [(1, mock_agent), (2, mock_agent)]
 
         app.register_blueprint(construct_persistent_agent_blueprint(self.mock_agent_pool))
         return app
@@ -36,19 +37,32 @@ class TestPersistentAgentController(TestCase):
         [
             (
                 "valid-agent",
-                "/agent/persistent/0",
+                "/agent/persistent/1",
                 dotdict(
                     {
                         "status_code": 200,
-                        "json": {"user_agent": UA, "cf_clearance": ""},
+                        "json": {"id": 1, "user_agent": UA, "cf_clearance": ""},
                     }
                 ),
             ),
             (
                 "non-existing-agent",
-                "/agent/persistent/1",
+                "/agent/persistent/99",
                 dotdict(
                     {"status_code": 404, "json": {"code": 404, "status": "Not Found"}}
+                ),
+            ),
+            (
+                "all-agents",
+                "/agent/persistent",
+                dotdict(
+                    {
+                        "status_code": 200,
+                        "json": [
+                            {"id": 1, "user_agent": UA, "cf_clearance": ""},
+                            {"id": 2, "user_agent": UA, "cf_clearance": ""},
+                        ],
+                    }
                 ),
             ),
         ]
@@ -63,7 +77,7 @@ class TestPersistentAgentController(TestCase):
             (
                 "valid-params",
                 {"disableCloudflareV1": True},
-                dotdict({"status_code": 201, "json": {"id": 0}}),
+                dotdict({"status_code": 201, "json": {"id": 1}}),
             ),
             (
                 "invalid-params",
@@ -88,7 +102,7 @@ class TestPersistentAgentController(TestCase):
         ]
     )
     def test_agent_request_post(self, name, params, expected):
-        self.mock_agent_pool.generate.return_value = (0, MagicMock())
+        self.mock_agent_pool.generate.return_value = (1, MagicMock())
         response = self.client.post(
             "/agent/persistent", content_type="application/json", json=params
         )
@@ -101,12 +115,12 @@ class TestPersistentAgentController(TestCase):
         [
             (
                 "one-agent",
-                "/agent/persistent/0",
-                dotdict({"status_code": 200, "json": {"id": 0}}),
+                "/agent/persistent/1",
+                dotdict({"status_code": 200, "json": {"id": 1}}),
             ),
             (
                 "non-existing-agent",
-                "/agent/persistent/1",
+                "/agent/persistent/99",
                 dotdict(
                     {"status_code": 404, "json": {"code": 404, "status": "Not Found"}}
                 ),
@@ -121,7 +135,7 @@ class TestPersistentAgentController(TestCase):
     def test_agent_request_delete(self, name, url, expected):
         response = self.client.delete(url)
         if name == "one-agent":
-            self.mock_agent_pool.pop.assert_called_once_with(0, None)
+            self.mock_agent_pool.pop.assert_called_once_with(1, None)
         if name == "all-agents":
             self.mock_agent_pool.clear.assert_called_once()
         self.assertEqual(response.status_code, expected.status_code)

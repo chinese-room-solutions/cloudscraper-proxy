@@ -14,7 +14,7 @@ class AgentPool(dict):
         """
 
         dict.__init__(self, *args, **kwargs)
-        self.agent_id = -1
+        self.agent_id = 0
 
     def generate(self, **kwargs) -> tuple[int, cloudscraper.CloudScraper]:
         """Generate a new agent.
@@ -28,9 +28,15 @@ class AgentPool(dict):
         """
 
         if self.agent_id == sys.maxsize:
-            self.agent_id = 0
+            self.agent_id = 1
         else:
             self.agent_id += 1
         self[self.agent_id] = cloudscraper.create_scraper(**kwargs)
 
         return self.agent_id, self[self.agent_id]
+
+    def clear(self) -> None:
+        """Clear the agent pool."""
+
+        self.agent_id = 0
+        return super().clear()

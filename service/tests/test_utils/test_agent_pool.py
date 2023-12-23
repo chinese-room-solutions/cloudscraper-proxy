@@ -15,12 +15,12 @@ class TestAgentPool(unittest.TestCase):
             agent_id, agent = agent_pool.generate()
 
             # Assert the agent id and agent
-            self.assertEqual(agent_id, 0)
+            self.assertEqual(agent_id, 1)
             self.assertEqual(agent, mock_cloudscraper.create_scraper.return_value)
 
             # Generate another agent and assert the agent id and agent
             agent_id, agent = agent_pool.generate()
-            self.assertEqual(agent_id, 1)
+            self.assertEqual(agent_id, 2)
             self.assertEqual(agent, mock_cloudscraper.create_scraper.return_value)
 
 

@@ -55,6 +55,7 @@ def construct_persistent_agent_blueprint(
             return (
                 jsonify(
                     {
+                        "id": agent_id,
                         "user_agent": agent.headers.get("User-Agent", ""),
                         "cf_clearance": cookies.get("cf_clearance", ""),
                     }
@@ -63,6 +64,22 @@ def construct_persistent_agent_blueprint(
             )
         else:
             return abort(404)
+
+    @bp.route("", methods=["GET"])
+    @bp.response(200, AgentRequestFullResponseShema(many=True))
+    def get_all():
+        """Get all persistent agents."""
+
+        return jsonify(
+            [
+                {
+                    "id": agent_id,
+                    "user_agent": agent.headers.get("User-Agent", ""),
+                    "cf_clearance": agent.cookies.get_dict().get("cf_clearance", ""),
+                }
+                for agent_id, agent in agent_pool.items()
+            ]
+        )
 
     @bp.route("", methods=["POST"])
     @bp.arguments(

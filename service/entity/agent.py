@@ -92,6 +92,7 @@ class EphemeralAgentRequestDataShema(Schema):
 class AgentRequestFullResponseShema(Schema):
     """Agent request full response schema."""
 
+    id = fields.Integer(required=True, description="Agent ID.")
     user_agent = fields.String(required=True, description="Generated user agent.")
     cf_clearance = fields.String(required=True, description="Obtained cf_clearance.")
 

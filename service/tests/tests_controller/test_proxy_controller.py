@@ -21,9 +21,9 @@ class TestProxyController(TestCase):
         # Mock agent pool functionality
         self.mock_agent_pool = MagicMock()
         self.mock_agent_pool.__contains__.side_effect = (
-            lambda key: True if key == 0 else False
+            lambda key: True if key == 1 else False
         )
-        self.mock_agent_pool.generate.return_value = (0, MagicMock())
+        self.mock_agent_pool.generate.return_value = (1, MagicMock())
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.headers = {"Content-Type": "text/plain"}
@@ -40,12 +40,12 @@ class TestProxyController(TestCase):
         [
             (
                 "valid-agent",
-                "/proxy?agent_id=0&dst=http://example.com",
+                "/proxy?agent_id=1&dst=http://example.com",
                 dotdict(
                     {
                         "status_code": 200,
                         "data": b"response content",
-                        "cookie": "cloudscraper-agent-id=0; Path=/",
+                        "cookie": "cloudscraper-agent-id=1; Path=/",
                     }
                 ),
             ),
@@ -56,13 +56,13 @@ class TestProxyController(TestCase):
                     {
                         "status_code": 200,
                         "data": b"response content",
-                        "cookie": "cloudscraper-agent-id=0; Path=/",
+                        "cookie": "cloudscraper-agent-id=1; Path=/",
                     }
                 ),
             ),
             (
                 "missing-params",
-                "/proxy?agent_id=0",
+                "/proxy?agent_id=1",
                 dotdict(
                     {
                         "status_code": 422,
